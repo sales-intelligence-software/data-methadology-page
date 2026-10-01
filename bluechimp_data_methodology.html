@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intent Data Methodology: Sources and Scoring | BlueChimp</title>
+<meta name="description" content="See where BlueChimp intent data comes from, how buying signals are combined and scored, how often data refreshes, and how we protect your LinkedIn network.">
+<style>
+:root{
+  --navy:#07172e; --navy2:#0c2344; --blue:#2563eb; --cyan:#20c7e9;
+  --ink:#0d1b2f; --muted:#637083; --line:#dce5ef; --soft:#f5f8fc;
+  --green:#16a085; --white:#fff; --shadow:0 18px 55px rgba(7,23,46,.09);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.65}
+a{text-decoration:none;color:inherit}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:850;font-size:23px;letter-spacing:-.7px}.logo span{color:var(--blue)}
+.navlinks{display:flex;gap:28px;align-items:center;font-size:14px;color:#475569}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 20px;border-radius:10px;font-weight:750;font-size:14px;border:1px solid transparent}
+.btn.primary{background:var(--blue);color:white;box-shadow:0 10px 24px rgba(37,99,235,.22)}
+.btn.ghost{border-color:var(--line);background:#fff}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#f8fbff 0%,#eef5ff 58%,#f8fdff 100%);border-top:1px solid #edf2f7}
+.hero:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;right:-170px;top:-210px;background:radial-gradient(circle,rgba(32,199,233,.18),rgba(37,99,235,.04) 60%,transparent 70%)}
+.hero-grid{min-height:600px;display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center;padding:78px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid #cfe0ff;background:#fff;color:var(--blue);border-radius:999px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+h1{font-size:58px;line-height:1.04;letter-spacing:-2.5px;margin:18px 0 22px;max-width:680px}
+.lead{font-size:19px;color:#536176;max-width:650px}.updated{font-size:13px;color:#7b8798;margin-top:25px}
+.hero-card{position:relative;background:var(--navy);color:#fff;border-radius:24px;padding:28px;box-shadow:0 30px 70px rgba(7,23,46,.25);min-height:380px}
+.hero-card:before{content:"";position:absolute;inset:0;border-radius:24px;background:radial-gradient(circle at 85% 10%,rgba(32,199,233,.22),transparent 35%)}
+.window{position:relative;background:#0c2344;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px}
+.window-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.dots{display:flex;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:#55708f}
+.score{display:flex;align-items:center;justify-content:space-between;background:#102d53;border-radius:14px;padding:18px;margin:12px 0}
+.score strong{font-size:31px}.meter{height:7px;background:#244567;border-radius:99px;overflow:hidden;margin-top:7px}.meter i{display:block;height:100%;width:86%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px}
+.signals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.signal{background:#102d53;padding:13px;border-radius:11px;font-size:12px;color:#b9c9db}.signal b{display:block;color:#fff;font-size:14px}
+section{padding:92px 0}.section-head{max-width:720px;margin-bottom:42px}.kicker{color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:12px}
+h2{font-size:40px;line-height:1.12;letter-spacing:-1.5px;margin:9px 0 15px}.sub{color:var(--muted);font-size:17px}
+.stats{margin-top:-55px;position:relative;z-index:3}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.stat{padding:28px}.stat+.stat{border-left:1px solid var(--line)}.stat .num{font-size:25px;font-weight:850;color:var(--navy)}.stat p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.sources{background:var(--soft)}.source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.source{background:#fff;border:1px solid var(--line);border-radius:16px;padding:25px;min-height:195px;transition:.2s}.source:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:#edf4ff;color:var(--blue);font-weight:900;margin-bottom:17px}
+.source h3{margin:0 0 8px;font-size:18px}.source p{margin:0;color:var(--muted);font-size:14px}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:50px;position:relative}.flow:before{content:"";position:absolute;left:16%;right:16%;top:28px;border-top:2px dashed #c7d6e7}
+.step{position:relative;text-align:center}.step-no{position:relative;z-index:2;width:58px;height:58px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:white;font-weight:850;border:7px solid white;box-shadow:0 0 0 1px var(--line)}
+.step h3{font-size:19px;margin:0 0 8px}.step p{font-size:14px;color:var(--muted)}
+.score-section{background:var(--navy);color:white}.score-section .sub{color:#b9c6d7}
+.score-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}
+.ring{width:285px;height:285px;margin:auto;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--cyan) 0 72%,#17375e 72% 100%);position:relative}
+.ring:after{content:"";position:absolute;width:215px;height:215px;border-radius:50%;background:var(--navy)}
+.ring-text{position:relative;z-index:2;text-align:center}.ring-text strong{display:block;font-size:67px;line-height:1}.ring-text span{color:#a8bdd4;font-size:13px}
+.factor{padding:19px 0;border-bottom:1px solid rgba(255,255,255,.12);display:grid;grid-template-columns:42px 1fr;gap:14px}.factor:last-child{border-bottom:0}.factor .mini{width:34px;height:34px;border-radius:9px;background:#14365d;display:grid;place-items:center;color:var(--cyan);font-weight:900}.factor b{display:block}.factor span{color:#aebdd0;font-size:14px}
+.fresh-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.panel{border:1px solid var(--line);border-radius:18px;padding:28px;background:#fff}.panel h3{margin-top:0}
+.timeline{margin-top:20px}.row{display:grid;grid-template-columns:1fr auto;gap:20px;padding:14px 0;border-bottom:1px solid #edf1f5}.row:last-child{border:0}.badge{font-size:12px;font-weight:800;color:var(--green);background:#eaf8f4;border-radius:99px;padding:5px 9px}
+.privacy{background:linear-gradient(135deg,#eef6ff,#f8fbff)}.privacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.callout{padding:30px;border-radius:18px;background:#fff;border:1px solid #dbe7f4}.callout h3{font-size:21px;margin:0 0 10px}.callout p{color:var(--muted);font-size:14px}
+.limits{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}.checklist{display:grid;gap:12px}.check{display:flex;gap:12px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}.check i{font-style:normal;color:var(--blue);font-weight:900}
+.compliance{margin-top:28px;padding:24px;border-left:4px solid var(--blue);background:#f5f8fc;border-radius:0 12px 12px 0;color:#566477}
+.faq{background:var(--soft)}details{background:#fff;border:1px solid var(--line);border-radius:12px;margin:11px 0;padding:0 20px}summary{cursor:pointer;list-style:none;padding:19px 0;font-weight:750;display:flex;justify-content:space-between}summary:after{content:"+";font-size:21px;color:var(--blue)}details[open] summary:after{content:"−"}details p{margin:0 0 20px;color:var(--muted)}
+.cta{padding:80px 0}.cta-box{background:linear-gradient(135deg,var(--navy),#123a69);border-radius:25px;padding:58px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:30px;position:relative;overflow:hidden}.cta-box:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-70px;top:-100px}.cta-box h2{margin:0 0 10px}.cta-box p{color:#bdcad9;margin:0}
+footer{border-top:1px solid var(--line);padding:30px 0;color:#7a8796;font-size:13px}.foot{display:flex;justify-content:space-between}
+@media(max-width:850px){
+.navlinks a:not(.btn){display:none}.hero-grid,.score-layout,.fresh-grid,.privacy-grid,.limits{grid-template-columns:1fr}.hero-grid{padding:55px 0 95px}.hero-card{min-height:auto}h1{font-size:43px}.stats-grid,.source-grid{grid-template-columns:1fr 1fr}.stat:nth-child(3){border-left:0;border-top:1px solid var(--line)}.stat:nth-child(4){border-top:1px solid var(--line)}.flow{grid-template-columns:1fr;gap:24px}.flow:before{display:none}.cta-box{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.stats-grid,.source-grid{grid-template-columns:1fr}.stat+.stat,.stat:nth-child(3){border-left:0;border-top:1px solid var(--line)}h1{font-size:37px}h2{font-size:32px}section{padding:68px 0}.hero-grid{gap:35px}.nav .btn.ghost{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="logo">blue<span>chimp</span></div>
+    <nav class="navlinks">
+      <a href="#sources">Data Sources</a><a href="#methodology">Methodology</a><a href="#privacy">Security</a><a href="#faq">FAQ</a>
+      <a class="btn ghost" href="/pricing">Pricing</a><a class="btn primary" href="/demo-signup">Book a Demo →</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Data Methodology</span>
+      <h1>How BlueChimp Intent Data Works</h1>
+      <p class="lead">See which companies are actively researching solutions like yours, then uncover who in your network can make the warmest introduction.</p>
+      <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap"><a class="btn primary" href="#methodology">Explore the methodology ↓</a><a class="btn ghost" href="/demo-signup">Book a Demo</a></div>
+      <p class="updated">Last updated: [Month Year]</p>
+    </div>
+    <div class="hero-card">
+      <div class="window">
+        <div class="window-top"><b>Opportunity Monitor</b><div class="dots"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+        <div style="font-size:12px;color:#9bb0c8">ACCOUNT INTENT SCORE</div>
+        <div class="score"><div><b>Acme Technologies</b><div class="meter"><i></i></div></div><strong>86</strong></div>
+        <div class="signals">
+          <div class="signal"><b>High intent</b>Research activity</div>
+          <div class="signal"><b>3 warm paths</b>Relationship strength</div>
+          <div class="signal"><b>Strong fit</b>Buyer profile</div>
+          <div class="signal"><b>This week</b>Signal freshness</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap stats">
+  <div class="stats-grid">
+    <div class="stat"><div class="num">6</div><p>Independent signal sources</p></div>
+    <div class="stat"><div class="num">Company-level</div><p>Intent, not individual tracking</p></div>
+    <div class="stat"><div class="num">Weekly</div><p>Signal windows and monitoring</p></div>
+    <div class="stat"><div class="num">Zero-storage</div><p>CSV uploads processed in-browser</p></div>
+  </div>
+</div>
+
+<section class="sources" id="sources">
+<div class="wrap">
+  <div class="section-head"><div class="kicker">01 · Sources</div><h2>Where our intent data comes from</h2><p class="sub">We combine several independent sources so no single provider's blind spots decide what you see.</p></div>
+  <div class="source-grid">
+    <article class="source"><div class="icon">B</div><h3>Bombora</h3><p>Company Surge data shows businesses reading more than usual about a topic across a large cooperative of B2B websites.</p></article>
+    <article class="source"><div class="icon">G2</div><h3>G2</h3><p>Shows which companies are researching software categories, comparing products and reading reviews on G2.</p></article>
+    <article class="source"><div class="icon">A</div><h3>Apollo</h3><p>Company and contact data plus buying signals used to identify likely buyers at in-market accounts.</p></article>
+    <article class="source"><div class="icon">E</div><h3>Explorium</h3><p>External firmographic, growth and hiring signals that add valuable context to account intent.</p></article>
+    <article class="source"><div class="icon">SI</div><h3>SalesIntel</h3><p>Verified B2B company and contact data, plus research-based intent topics.</p></article>
+    <article class="source"><div class="icon">in</div><h3>LinkedIn Signals</h3><p>Relationship paths between you and target accounts through your own LinkedIn connections.</p></article>
+  </div>
+</div>
+</section>
+
+<section id="methodology">
+<div class="wrap">
+  <div class="section-head"><div class="kicker">02 · Methodology</div><h2>How signals become opportunities</h2><p class="sub">Three steps turn scattered research activity into a clean, actionable account list.</p></div>
+  <div class="flow">
+    <div class="step"><div class="step-no">1</div><h3>Collect</h3><p>We pull intent signals for the topics you choose, including selected Bombora categories.</p></div>
+    <div class="step"><div class="step-no">2</div><h3>Merge & de-duplicate</h3><p>Signals are matched to the same company and de-duplicated so one account is never counted twice.</p></div>
+    <div class="step"><div class="step-no">3</div><h3>Match your network</h3><p>Each account is checked against your LinkedIn connections to find the shortest, strongest path to a likely decision maker.</p></div>
+  </div>
+</div>
+</section>
+
+<section class="score-section">
+<div class="wrap score-layout">
+  <div><div class="ring"><div class="ring-text"><strong>72</strong><span>Intent score / 100</span></div></div></div>
+  <div>
+    <div class="kicker" style="color:var(--cyan)">03 · Scoring</div><h2>How we score each account</h2><p class="sub">Every account receives an intent score from 0 to 100. Higher scores indicate stronger and more recent buying activity.</p>
+    <div class="factor"><div class="mini">01</div><div><b>Buying intent</b><span>Strength and recency of company research activity across your selected topics. [Weighting to confirm]</span></div></div>
+    <div class="factor"><div class="mini">02</div><div><b>Relationship strength</b><span>How close and trusted your path into the account is, including the number of warm paths.</span></div></div>
+    <div class="factor"><div class="mini">03</div><div><b>Buyer fit</b><span>How well the company and likely decision maker match your ideal customer profile.</span></div></div>
+  </div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+  <div class="section-head"><div class="kicker">04 · Freshness</div><h2>How fresh is the data?</h2><p class="sub">Intent changes quickly, so every account shows when its signal was detected. Opportunity Monitor checks your account list every week and emails you when accounts start surging.</p></div>
+  <div class="fresh-grid">
+    <div class="panel"><h3>Refresh cadence</h3><div class="timeline"><div class="row"><span>Intent signals</span><span class="badge">[Weekly, confirm]</span></div><div class="row"><span>Signal windows</span><span>This week · 7 days · 14 days</span></div><div class="row"><span>Opportunity Monitor</span><span class="badge">Weekly</span></div><div class="row"><span>LinkedIn network match</span><span>[Confirm timing]</span></div></div></div>
+    <div class="panel"><h3>Decision-maker data</h3><p class="sub" style="font-size:15px">Verified decision makers at target accounts are sourced only from first-party APIs of BlueChimp's data partners.</p><div style="margin-top:24px;padding:20px;background:#f5f8fc;border-radius:12px"><b>Why this matters</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">The goal is not just to find an active company. It is to connect account-level demand with relevant people and a practical path to reach them.</p></div></div>
+  </div>
+</div>
+</section>
+
+<section class="privacy" id="privacy">
+<div class="wrap">
+  <div class="section-head"><div class="kicker">05 · Your data</div><h2>Your network stays yours</h2><p class="sub">BlueChimp uses your data to identify warm paths without turning your network into someone else's dataset.</p></div>
+  <div class="privacy-grid">
+    <div class="callout"><h3>🔒 Private LinkedIn network</h3><p>Your LinkedIn connections are used only to find your warm paths. They are never shared with other customers.</p></div>
+    <div class="callout"><h3>◫ Zero-storage uploads</h3><p>CSV files are parsed in your browser and never stored on BlueChimp servers.</p></div>
+    <div class="callout"><h3>⇩ Exportable context</h3><p>Account context and lists remain exportable as your workflow grows.</p></div>
+    <div class="callout"><h3>✓ Partner-sourced contacts</h3><p>Verified decision-maker information comes through first-party APIs from data partners.</p></div>
+  </div>
+</div>
+</section>
+
+<section>
+<div class="wrap limits">
+  <div><div class="kicker">06 · Accuracy & limits</div><h2>Strong signal.<br>Not a guarantee.</h2><p class="sub">Intent data is most useful when you understand exactly what it does and does not tell you.</p><div class="compliance"><b>Privacy & compliance</b><br>Third-party intent data is aggregated at the company level. Where personal data is involved, providers rely on consent collected through publisher networks and support opt-out requests.</div></div>
+  <div class="checklist">
+    <div class="check"><i>✓</i><span>Shows <b>company-level research activity</b>, not that a specific person is ready to buy.</span></div>
+    <div class="check"><i>✓</i><span>Some noise is unavoidable because students, competitors and researchers may also read about topics.</span></div>
+    <div class="check"><i>✓</i><span>Smaller companies create fewer signals and may appear less often.</span></div>
+    <div class="check"><i>✓</i><span>A warm path makes an introduction easier, but the person still decides whether to help.</span></div>
+    <div class="check"><i>✓</i><span>BlueChimp combines intent, relationships and buyer fit rather than relying on a single signal.</span></div>
+  </div>
+</div>
+</section>
+
+<section class="faq" id="faq">
+<div class="wrap" style="max-width:850px">
+  <div class="section-head"><div class="kicker">07 · FAQ</div><h2>Questions about the methodology</h2></div>
+  <details><summary>Do you track individual people?</summary><p>No. Intent signals are company-level. Relationship paths come only from your own LinkedIn connections.</p></details>
+  <details><summary>Which intent topics can I track?</summary><p>You choose the topics during setup, including Bombora intent categories that match what you sell.</p></details>
+  <details><summary>How is the intent score calculated?</summary><p>It combines the strength and recency of research activity across sources into a 0 to 100 score.</p></details>
+  <details><summary>Do you store my CSV uploads?</summary><p>No. Files are parsed in your browser and never saved to BlueChimp servers.</p></details>
+  <details><summary>Can I see which source a signal came from?</summary><p>[Confirm with product team: yes / Enterprise only / no]</p></details>
+</div>
+</section>
+
+<section class="cta">
+<div class="wrap">
+  <div class="cta-box"><div><div class="kicker" style="color:var(--cyan)">Ready to see it live?</div><h2>See the data on your own market</h2><p>Turn buying signals and your existing relationships into a clearer path to the right accounts.</p></div><a class="btn primary" href="/demo-signup" style="background:white;color:var(--navy);min-width:155px">Book a Demo →</a></div>
+</div>
+</section>
+</main>
+
+<footer><div class="wrap foot"><div class="logo" style="font-size:18px">blue<span>chimp</span></div><div>Data Methodology · Security · Privacy</div></div></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Do you track individual people?","acceptedAnswer":{"@type":"Answer","text":"No. Intent signals are company-level. Relationship paths come only from your own LinkedIn connections."}},
+{"@type":"Question","name":"Which intent topics can I track?","acceptedAnswer":{"@type":"Answer","text":"You choose the topics during setup, including Bombora intent categories that match what you sell."}},
+{"@type":"Question","name":"How is the intent score calculated?","acceptedAnswer":{"@type":"Answer","text":"It combines the strength and recency of research activity across our sources into a 0 to 100 score."}},
+{"@type":"Question","name":"Do you store my CSV uploads?","acceptedAnswer":{"@type":"Answer","text":"No. Files are parsed in your browser and never saved to our servers."}}
+]}
+</script>
+</body>
+</html>
